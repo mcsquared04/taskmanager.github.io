@@ -1,0 +1,60 @@
+body {
+    background-color: #A6AFB8;
+}
+.add-task {
+    background-color: #888888;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-button {
+    display: inline-block;
+    padding: 10px;
+    border: 1px #888888;
+    border-radius: 5px;
+    margin-right: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: #000000;
+  }
+
+  .nav-button.active {
+    background-color: #F8F1EB;
+    color: #000000;
+  }
+
+  .spacer {
+    height: 20px;
+  }
+
+
+.section {
+    padding: 5rem;
+}
+
+.heading {
+    padding: 5rem;
+    text-align: left;
+}
+
+button {
+    font-family: "Avenir", sans-serif;
+    margin-top: 2rem;
+    margin-right: 1rem;
+    background-color: transparent;
+}

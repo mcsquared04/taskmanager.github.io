@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>monday</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body class="background">
+
+    <!-- Navigation bar -->
+    <nav>
+      <a href="./index.html" class="nav-button">site</a>
+      <a href="./monday.html" class="nav-button active">monday</a>
+      <a href="./tuesday.html" class="nav-button">tuesday</a>
+      <a href="./wednesday.html" class="nav-button">wednesday</a>
+      <a href="./thursday.html" class="nav-button">thursday</a>
+      <a href="./friday.html" class="nav-button">friday</a>
+      <a href="./saturday.html" class="nav-button">saturday</a>
+      <a href="./sunday.html" class="nav-button">sunday</a>
+    </nav>
+
+      <!-- Music Player -->
+    <div class="spacer"></div>
+    <audio id="music" autoplay controls></audio>
+    <audio id="audio1" src="nintendo.mp3" preload="auto"></audio>
+    <audio id="audio2" src="ghibli.mp3" preload="auto"></audio>
+    <audio id="audio3" src="new-jeans-jazz.mp3" preload="auto"></audio>
+    <div class="spacer"></div>
+    <button id="music1">nintendo</button>
+    <button id="music2">studio ghibli</button>
+    <button id="music3">new jeans jazz</button>
+
+    <!-- Add task and date in format MM/DD/YYYY HH:MM AM/PM -->
+    <form id="add-task-form">
+      <input type="text" id="new-task" placeholder="Add new task...">
+      <input type="text" id="new-task-time" placeholder="Add time...">
+      <button id="add-task">Add</button>
+    </form>
+    <ul id="task-list"></ul>
+
+    <!-- Store task and background color -->
+    <script>
+      let tasks = [];
+      const pageId = "monday";
+      let taskCounter = 0;
+
+      function addTask(name, time) {
+        const task = { name, time, id: taskCounter };
+        tasks.push(task);
+        taskCounter++;
+        localStorage.setItem(`tasks-${pageId}`, JSON.stringify(tasks));
+        localStorage.setItem(`taskCounter-${pageId}`, taskCounter.toString());
+        renderTasks();
+      }
+
+      function deleteTask(taskId) {
+        tasks = tasks.filter(task => task.id !== taskId);
+        localStorage.setItem(`tasks-${pageId}`, JSON.stringify(tasks));
+        renderTasks();
+      }
+
+      function renderTasks() {
+        const taskList = document.getElementById("task-list");
+        taskList.innerHTML = "";
+        for (const task of tasks) {
+          const taskElement = document.createElement("li");
+          taskElement.innerText = `${task.name} - ${task.time}`;
+          const deleteButton = document.createElement("button");
+          deleteButton.innerText = "Delete";
+          deleteButton.addEventListener("click", () => {
+            deleteTask(task.id);
+          });
+          taskElement.appendChild(deleteButton);
+          taskList.appendChild(taskElement);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        tasks = JSON.parse(localStorage.getItem(`tasks-${pageId}`)) || [];
+        taskCounter = parseInt(localStorage.getItem(`taskCounter-${pageId}`)) || 0;
+        renderTasks();
+      });
+
+      window.addEventListener('message', function(event) {
+        if (event.data.type === 'setBackgroundColor') {
+          document.body.style.backgroundColor = event.data.color;
+        }
+      });
+
+      const selectedColor = localStorage.getItem('selectedColor');
+      if (selectedColor) {
+        document.body.style.backgroundColor = selectedColor;
+      }
+
+      const addTaskForm = document.getElementById("add-task-form");
+      const newTaskInput = document.getElementById("new-task");
+      const newTaskTimeInput = document.getElementById("new-task-time");
+
+      addTaskForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const name = newTaskInput.value;
+        const time = newTaskTimeInput.value;
+        addTask(name, time);
+        newTaskInput.value = " ";
+    });
+
+    function renderTasks() {
+  const taskList = document.getElementById('task-list');
+  taskList.innerHTML = '';
+
+  // Sort the tasks by deadline
+  tasks.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+  tasks.forEach(function(task, index) {
+    const li = document.createElement('li');
+    const now = new Date();
+    const deadline = new Date(task.time);
+    const timeDiff = deadline.getTime() - now.getTime();
+    const secondsRemaining = Math.floor(timeDiff / 1000);
+    const minutesRemaining = Math.floor(secondsRemaining / 60);
+    const hoursRemaining = Math.floor(minutesRemaining / 60);
+    const daysRemaining = Math.floor(hoursRemaining / 24);
+
+    let timerText;
+    if (timeDiff <= 0) {
+      timerText = 'Task overdue';
+    } else {
+      const remainingHours = hoursRemaining % 24;
+      const remainingMinutes = minutesRemaining % 60;
+      const remainingSeconds = secondsRemaining % 60;
+      timerText = `(${daysRemaining} days, ${remainingHours} hours, ${remainingMinutes} minutes, ${remainingSeconds} seconds remaining)`;
+    }
+
+    li.innerHTML = `
+      <span>${task.name}</span>
+      <span class="timer" data-time="${task.time}">${timerText}</span>
+      <button class="remove-task" data-index="${index}">X</button>
+    `;
+    taskList.appendChild(li);
+  });
+
+  // Update the countdown timers every second
+  setInterval(updateTimers, 1000);
+}
+
+function updateTimers() {
+  const timerElements = document.querySelectorAll('.timer');
+  timerElements.forEach(function(timerElement) {
+    const time = new Date(timerElement.getAttribute('data-time'));
+    const now = new Date();
+    const timeDiff = time.getTime() - now.getTime();
+    const secondsRemaining = Math.floor(timeDiff / 1000);
+    const minutesRemaining = Math.floor(secondsRemaining / 60);
+    const hoursRemaining = Math.floor(minutesRemaining / 60);
+    const daysRemaining = Math.floor(hoursRemaining / 24);
+
+    let timerText;
+    if (timeDiff <= 0) {
+      timerText = 'Task overdue';
+    } else {
+      const remainingHours = hoursRemaining % 24;
+      const remainingMinutes = minutesRemaining % 60;
+      const remainingSeconds = secondsRemaining % 60;
+      timerText = `(${daysRemaining} days, ${remainingHours} hours, ${remainingMinutes} minutes, ${remainingSeconds} seconds remaining)`;
+    }
+
+    timerElement.textContent = timerText;
+  });
+}
+    </script>
+
+    <script src="script.js"></script>
+    <script src="music.js"></script>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body onload="loadBackgroundColor()" class="background">
+
+    <!-- Navigation bar -->
+    <ul class="nav nav-tabs">
+    <nav>
+      <a href="./index.html" class="nav-button active">site</a>
+      <a href="./monday.html" class="nav-button">monday</a>
+      <a href="./tuesday.html" class="nav-button">tuesday</a>
+      <a href="./wednesday.html" class="nav-button">wednesday</a>
+      <a href="./thursday.html" class="nav-button">thursday</a>
+      <a href="./friday.html" class="nav-button">friday</a>
+      <a href="./saturday.html" class="nav-button">saturday</a>
+      <a href="./sunday.html" class="nav-button">sunday</a>
+    </nav>
+
+    <main class="section">
+      <h3>click on the buttons to change the background color:</h3>
+
+      <!-- buttons that change background color -->
+      <button class="bg-color" data-color="#F8F1EB">ivory</button>
+      <button class="bg-color" data-color="#CDA49B">muted pink</button>
+      <button class="bg-color" data-color="#A6AFB8">muted blue</button>
+
+      <script>
+        // Get background color from localStorage
+        const selectedColor = localStorage.getItem('selectedColor');
+
+        // Set the background color to the selected color
+        if (selectedColor) {
+          document.body.style.backgroundColor = selectedColor;
+        }
+
+        // Background color change
+        document.querySelectorAll('.bg-color').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const color = this.getAttribute('data-color');
+            document.body.style.backgroundColor = color;
+            localStorage.setItem('selectedColor', color);
+
+            // Loop through all other HTML pages and set background color to the color selected by user
+            const otherPages = ['page1.html', 'page2.html', 'page3.html'];
+            otherPages.forEach(function(page) {
+              const iframe = document.createElement('iframe');
+              iframe.style.display = 'none';
+              iframe.src = page;
+              iframe.onload = function() {
+                iframe.contentWindow.postMessage({ type: 'setBackgroundColor', color: selectedColor }, '*');
+              };
+              document.body.appendChild(iframe);
+            });
+          });
+        });
+      </script>
+
+      <h3>click on the buttons to change the music:</h3>
+      <audio id="music" autoplay controls></audio>
+      <!-- buttons that  change background music -->
+      <button id="music1">nintendo</button>
+      <button id="music2">studio ghibli</button>
+      <button id="music3">new jeans jazz</button>
+
+      <script>
+        let music = document.getElementById('music');
+
+        // Music change
+        document.querySelector('#music1').addEventListener('click', function() {
+          music.src = 'nintendo.mp3';
+        });
+
+        document.querySelector('#music2').addEventListener('click', function() {
+          music.src = 'ghibli.mp3';
+        });
+
+        document.querySelector('#music3').addEventListener('click', function() {
+          music.src = 'new-jeans-jazz.mp3';
+        });
+      </script>
+    <script src="script.js"></script>
+    <script src="music.js"></script>
+    </main>
+  </body>
+</html>
